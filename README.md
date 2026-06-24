@@ -81,6 +81,8 @@ Live sync works via Supabase Realtime — both screens subscribe to the same
 waiting room updates within 300ms with no page refresh.
 
 ![Socket Event Diagram](docs/socket-diagram.png)
+## Documentation
+![Project Thought Process](./docs/Queue-Cure-Thought-Process.docx)
 
 ## Evaluation Criteria
 
