@@ -1,73 +1,96 @@
-# React + TypeScript + Vite
+# Queue Cure '26 🏥
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> Real-time smart clinic queue management — built for Wooble's Queue Cure '26 hackathon
 
-Currently, two official plugins are available:
+## Live Demo
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+| Screen | Link |
+|--------|------|
+| 🖥️ Receptionist | https://queue-cure-26-ecru.vercel.app/receptionist |
+| 📺 Patient Waiting Room | https://queue-cure-26-ecru.vercel.app/waiting-room |
+| 👨‍⚕️ Doctor Pulse Dashboard | https://queue-cure-26-ecru.vercel.app/doctor |
 
-## React Compiler
+## Problem
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+76% of India's 1.5 million clinics manage patient queues on paper slips and verbal calls.
+Patients wait 2–3 hours with zero visibility. Receptionists manage everything from memory.
 
-## Expanding the ESLint configuration
+## Solution
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+A three-screen, real-time queue management system:
+- **Receptionist** — register patients, call next token, set consult time
+- **Waiting Room** — live TV display showing current token, queue position, estimated wait
+- **Doctor Pulse** — analytics dashboard with queue load, wait trends, and hourly flow
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Unique Features (USP)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- **Priority-aware queue** — urgent and elderly patients bypass token order automatically
+- **Dynamic wait estimation** — calculated from real consult times, adjusts for overruns
+- **No-show detection** — alerts receptionist if a called patient hasn't been seen in 3× avg time
+- **Print token receipt** — generates an A6 printable slip replacing paper tokens
+- **Queue pause with reason** — receptionist logs reason (lunch/emergency); waiting room shows it
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React 18 + TypeScript + Vite |
+| Styling | TailwindCSS + shadcn/ui |
+| Animation | Framer Motion |
+| State | Zustand |
+| Realtime | Supabase Realtime (postgres_changes) |
+| Database | Supabase (PostgreSQL) |
+| Charts | Recharts |
+| Deployment | Vercel |
+
+## Local Setup
+
+1. Clone the repo
+```bash
+   git clone https://github.com/nihal-aiml/queue-cure-26.git
+   cd queue-cure-26
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+2. Install dependencies
+```bash
+   npm install
 ```
+
+3. Create `.env.local` in the project root
+
+VITE_SUPABASE_URL=https://ucscwccjgdkdcjpyjwru.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVjc2N3Y2NqZ2RrZGNqcHlqd3J1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMjg4MjcsImV4cCI6MjA5NzcwNDgyN30.JZuZPsL03151be82iNzSkA6knJQOvqKn_RnscL4Yebk
+
+
+4. Run the SQL schema in your Supabase SQL editor (see `/docs/schema.sql`)
+
+5. Start the dev server
+```bash
+   npm run dev
+```
+
+6. Open the three screens:
+   - http://localhost:5173/receptionist
+   - http://localhost:5173/waiting-room
+   - http://localhost:5173/doctor
+
+## Architecture
+
+Live sync works via Supabase Realtime — both screens subscribe to the same
+`postgres_changes` channel. When the receptionist clicks "Call Next," the
+waiting room updates within 300ms with no page refresh.
+
+![Socket Event Diagram](docs/socket-diagram.png)
+
+## Evaluation Criteria
+
+| Criterion | Weight | Implementation |
+|-----------|--------|----------------|
+| Live queue updates | 40% | Supabase Realtime postgres_changes, Zustand shared store |
+| Wait time from real data | 25% | (priority position × avg_consult_minutes) − session overrun |
+| Receptionist UX | 20% | Auto tokens, dropdowns, debounced button, toast errors |
+| Concurrency & edge cases | 15% | See thought process sheet in /docs |
+
+## License
+
+MIT
