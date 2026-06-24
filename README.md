@@ -82,7 +82,7 @@ waiting room updates within 300ms with no page refresh.
 
 ![Socket Event Diagram](docs/socket-diagram.png)
 ## Documentation
-![Project Thought Process](./docs/Queue-Cure-Thought-Process.docx)
+![Project Thought Process](./docs/QueueCure26_ThoughtProcess.docx)
 
 ## Evaluation Criteria
 
